@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <time.h>
-#include <conio.h>
 #include <string.h>
+#include <conio.h>
 #define TAM 7
-#define MONSTROS 2
+#define MONSTROS 7
 
 char mapa[TAM][TAM] = {{'H','.','.','.','.','.','.',},
                    {'.','.','.','.','.','.','.',},
@@ -21,6 +21,7 @@ struct personagem{
     int vida, atq, def, posx, posy, chave;
 }heroi, monstros[MONSTROS];
 
+int movimentos = 0;
 
 void gotoxy(int x, int y){
     COORD c;
@@ -71,7 +72,6 @@ void mostraMapa(){
             printf("%c", mapa[l][c]);
         }
     }
-    getch();
 }
 
 void geraMonstros(int qtde){
@@ -82,16 +82,13 @@ void geraMonstros(int qtde){
         x = rand()%TAM;
         y = rand()%TAM;
         if (mapa[x][y]=='.'){ //Se o espaço tiver um ponto pode colocar o monstro
-            if(cont==0){
-                mapa[x][y]='B';
+            if (cont == 0){
+                mapa[x][y] = 'B';
                 monstros[cont].chave = 1;
-            }
-            else{
+            } else {
                 mapa[x][y] = 'M';
                 monstros[cont].chave = 0;
-
             }
-
             monstros[cont].posx = x;
             monstros[cont].posy = y;
             monstros[cont].atq = 2;
@@ -104,8 +101,7 @@ void geraMonstros(int qtde){
 
 
 }
-
-void menssagem(int lin, int col, char*mens, int tam){
+void menssagem(int lin, int col, char *mens, int tam){
     int x;
     gotoxy(col,lin);
     printf("%s", mens);
@@ -145,90 +141,33 @@ void rolarDados(int m){
                 monstros[m].vida -= dano;
         }
     }
-    gotoxy(10, 18);
-    printf("Ataque inicial [%d]: Vida heroi [%d], Vida Monstro [%d]",
-              atq,  heroi.vida, monstros[m].vida); //Arrumei o atq inicial
+    gotoxy(18, 22);
+    printf("Ataque inicial [%03d] | Vida heroi [%02d] | Vida Monstro [%02d]", dado, heroi.vida, monstros[m].vida);
 
 
 }
 
 int batalha(int x, int y){
-    int m, vivo;
-
-    for(m=0; m < MONSTROS; m++){
-        //printf("Porrada [%d][%d],[%d][%d]", x, y, monstros[m].posx, monstros[m].posy); // Teste para ver se funciona
-        getch();
+    int m;
+    for(m=0; m<MONSTROS; m++){
         if (monstros[m].posx == x && monstros[m].posy == y){
             rolarDados(m);
             if(monstros[m].vida <=0){
-                if(mapa[x][y]=='B'){
-                    menssagem(7,15,"Boss derrotado!!! - Chave dropada", 35);
+                if (mapa[x][y] == 'B'){
+                    menssagem(18, 22, "Boss derrotado!!! - Chave dropada!!", 30);
                     heroi.chave = 1;
+                } else {
+                    menssagem(18, 22, "Monstro derrotado!!!", 30);
                 }
-                else{
-                    menssagem(7, 15, "Monstro derrotado!!!", 35);
-                }
+
                 mapa[x][y] = '.';
-            }
-            else{
-                if(heroi.vida <= 0){
-                    menssagem(7, 15,"Heroi Derrotado!!!", 35);
-                    vivo = 0;
-                }
-            }
         }
+      }
     }
-
-    return vivo;
-}
-
-int movimenta(char letra){
-    int vivo =1;
-    mapa[heroi.posx][heroi.posy]='.';
-    if(letra == 80 || letra=='s'){  //Colocando pra ele andar para baixo tanto com S como com a flechinha para baixosws
-        //Seria o conceito de colisão
-        if(heroi.posx < TAM-1){       //Colocando TAM-1 pra que ele não saia da tela e tambem pra ele só se movimentar pra proxima posição se for um ponto
-            if(mapa[heroi.posx+1][heroi.posy]=='.')
-                heroi.posx++;
-            else
-                if(mapa[heroi.posx+1][heroi.posy]=='M' || mapa[heroi.posx+1][heroi.posy]=='B')
-                    vivo = batalha(heroi.posx+1, heroi.posy);
-        }
+    if(heroi.vida <=0){
+        menssagem(18, 22,"Heroi Derrotado!!!", 30);
+        return 0;
     }
-    if(letra == 72 || letra=='w'){ //Anda para cima
-        if(heroi.posx > 0){
-            if(mapa[heroi.posx-1][heroi.posy]=='.')
-                heroi.posx--;
-            else
-                if(mapa[heroi.posx-1][heroi.posy]=='M' || mapa[heroi.posx-1][heroi.posy]=='B')
-                    vivo = batalha(heroi.posx-1, heroi.posy);
-        }
-    }
-    if(letra ==77 || letra=='d'){  //Anda para cima
-        if(heroi.posy < TAM-1){
-            if(mapa[heroi.posx][heroi.posy+1]=='.')
-                heroi.posy++;
-            else
-                if(mapa[heroi.posx][heroi.posy+1]=='M' || mapa[heroi.posx][heroi.posy+1]=='B')
-                    vivo = batalha(heroi.posx, heroi.posy+1);
-        }
-    }
-    if(letra ==75 || letra=='a'){  //Anda para a e
-        if(heroi.posy > 0){
-            if(mapa[heroi.posx][heroi.posy-1]=='.')
-                heroi.posy--;
-            else
-                if(mapa[heroi.posx][heroi.posy-1]=='M' || mapa[heroi.posx][heroi.posy-1]=='B')
-                    vivo = batalha(heroi.posx, heroi.posy-1);
-        }
-    }
-    mapa[heroi.posx][heroi.posy]='H';
-    return vivo;
-}
-
-
-
-
 /*{
 
     menssagem(20, 18, "Porrada!!!", 30);
@@ -237,19 +176,110 @@ int movimenta(char letra){
     getch();
     menssagem(20, 18, "oi", 30);
 */
+}
+
+int movimenta(char letra){
+    int vivo =1;
+    movimentos++;
+    //gotoxy(11,24); printf("Movimentos: %03d", movimentos);
+    mapa[heroi.posx][heroi.posy]='.';
+    if(letra == 80 || letra=='s'){  //Colocando pra ele andar para baixo tanto com S como com a flechinha para baixosws
+        //Seria o conceito de colisão
+        if(heroi.posx < TAM-1){       //Colocando TAM-1 pra que ele não saia da tela e tambem pra ele só se movimentar pra proxima posição se for um ponto
+            if(mapa[heroi.posx+1][heroi.posy]=='.')
+                heroi.posx++;
+            else{
+                if((mapa[heroi.posx+1][heroi.posy]=='M') ||
+                   (mapa[heroi.posx+1][heroi.posy]=='B'))
+                    vivo = batalha(heroi.posx+1, heroi.posy);
+                else
+                    if ((mapa[heroi.posx+1][heroi.posy]== 'S') &&
+                        heroi.chave == 1){
+                            vivo = 2;
+                            menssagem(18, 22, "Barabeeeeennns, você venceu!!", 34);
+                        }
+            }
+
+    }
+    }
+    if(letra == 72 || letra=='w'){ //Anda para cima
+        if(heroi.posx > 0)
+            if(mapa[heroi.posx-1][heroi.posy]=='.')
+                heroi.posx--;
+            else {
+                if((mapa[heroi.posx-1][heroi.posy]=='M') ||
+                   (mapa[heroi.posx-1][heroi.posy]=='B'))
+                    vivo = batalha(heroi.posx-1,heroi.posy);
+                else
+                    if ((mapa[heroi.posx-1][heroi.posy]=='S') &&
+                        heroi.chave == 1){
+                            vivo = 2;
+                            menssagem(18, 22, "Barabeeeeennns, você venceu!!", 34);
+                        }
+            }
+    }
+    if(letra ==77 || letra=='d'){  //Anda para a d
+        if(heroi.posy < TAM-1)
+            if(mapa[heroi.posx][heroi.posy+1]=='.')
+                heroi.posy++;
+            else {
+                if((mapa[heroi.posx][heroi.posy+1]=='M') ||
+                   (mapa[heroi.posx][heroi.posy+1]=='B'))
+                    vivo = batalha(heroi.posx, heroi.posy+1);
+                else
+                    if((mapa[heroi.posx][heroi.posy+1] == 'S') &&
+                        heroi.chave == 1){
+                            vivo = 2;
+                            menssagem(18, 22, "Barabeeeeennns, você venceu!!", 34);
+                        }
+            }
+    }
+    if(letra ==75 || letra=='a'){  //Anda para a e
+        if(heroi.posy > 0)
+            if(mapa[heroi.posx][heroi.posy-1]=='.')
+                heroi.posy--;
+            else{
+                if((mapa[heroi.posx][heroi.posy-1]=='M') ||
+                   (mapa[heroi.posx][heroi.posy-1]=='B'))
+                    vivo = batalha(heroi.posx, heroi.posy-1);
+                else
+                    if((mapa[heroi.posx][heroi.posy-1] == 'S') &&
+                        heroi.chave == 1){
+                            vivo = 2;
+                            menssagem(18, 22, "Barabeeeeennns, você venceu!!", 34);
+                        }
+            }
+    }
+    mapa[heroi.posx][heroi.posy]='H';
+    return vivo;
+}
 
 
-/*void contaMonstros(){
+
+
+
+
+
+void contaMonstros(){
     int qtd_monstros = 0;
-    if(heroi.posx == 0 && heroi.posy == 0){
+    if(heroi.posx == 0 && heroi.posy == 0 || heroi.posx == 0 && heroi.posy == 1 || heroi.posx == 1 && heroi.posy == 0){
         for( ;heroi.posx <= heroi.posx+1; heroi.posx++){
             for( ; heroi.posy-1 <= heroi.posy+1; heroi.posy++){
                 if(mapa[heroi.posx][heroi.posy] == 'M'){
                     qtd_monstros = qtd_monstros +1;
+                }
             }
         }
     }
-
+    if(heroi.posx == 6 && heroi.posy == 1){
+        for( ;heroi.posx <= heroi.posx+1; heroi.posx++){
+            for( ; heroi.posy-1 <= heroi.posy+1; heroi.posy++){
+                if(mapa[heroi.posx][heroi.posy] == 'M'){
+                    qtd_monstros = qtd_monstros +1;
+                }
+            }
+        }
+    }
     for( ;heroi.posx-1 <= heroi.posx+1; heroi.posx++){
         for( ; heroi.posy-1 <= heroi.posy+1; heroi.posy++){
             if(mapa[heroi.posx][heroi.posy] == 'M'){
@@ -257,9 +287,11 @@ int movimenta(char letra){
             }
         }
     }
-    return qtd_monstros;
+    gotoxy(20,26);printf("Existem %02d monstros por perto.",qtd_monstros);
+
 }
-*/
+
+
 int main(){
     char letra;
     int vivo = 1;
@@ -269,20 +301,22 @@ int main(){
     heroi.vida = 10;
     heroi.atq = 4;
     heroi.def = 2;
-
+    heroi.chave = 0;
+    movimentos = 0;
 
     char nomeJogo[] = "Jogo de RPG";
     gotoxy((80-strlen(nomeJogo))/2, 5); //Nesta linha 5 cantralizando o jogo
     printf("%s", nomeJogo);
     geraMonstros(MONSTROS);
     do{
-        mostraMapa();
-        //printf("%d", contaMonstros());
-        //gotoxy(10, 20); printf("Existem %d , monstros ao seu redor!!!", contaMonstros());
-        letra = getch();
-        //gotoxy(10,18);printf("[%d]", letra);
-        movimenta(letra);
-    }while(letra != 27 && vivo == 1);
+            mostraMapa();
+            //contaMonstros();
+            char letra = getch();
+            gotoxy(11,24); printf("[%d] [%d]",heroi.posx, heroi.posy);
+            vivo = movimenta(letra);
+
+
+    }while(letra != 27 && vivo >= 1);
 
 
 }
