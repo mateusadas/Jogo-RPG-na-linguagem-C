@@ -147,7 +147,7 @@ void rolarDados(int m){
     }
     gotoxy(10, 18);
     printf("Ataque inicial [%d]: Vida heroi [%d], Vida Monstro [%d]",
-              heroi.vida, monstros[m].vida);
+              atq,  heroi.vida, monstros[m].vida); //Arrumei o atq inicial
 
 
 }
@@ -155,27 +155,30 @@ void rolarDados(int m){
 int batalha(int x, int y){
     int m, vivo;
 
-    for(m=0; m<MONSTROS; m++){
+    for(m=0; m < MONSTROS; m++){
         //printf("Porrada [%d][%d],[%d][%d]", x, y, monstros[m].posx, monstros[m].posy); // Teste para ver se funciona
         getch();
         if (monstros[m].posx == x && monstros[m].posy == y){
             rolarDados(m);
             if(monstros[m].vida <=0){
                 if(mapa[x][y]=='B'){
-                    menssagem(10,20,"Boss derrotado!!! - Chave dropada", 30);
+                    menssagem(7,15,"Boss derrotado!!! - Chave dropada", 35);
                     heroi.chave = 1;
                 }
                 else{
-                    menssagem(10, 20, "Monstro derrotado!!!", 30);
+                    menssagem(7, 15, "Monstro derrotado!!!", 35);
                 }
                 mapa[x][y] = '.';
+            }
+            else{
+                if(heroi.vida <= 0){
+                    menssagem(7, 15,"Heroi Derrotado!!!", 35);
+                    vivo = 0;
+                }
+            }
         }
-      }
     }
-    if(heroi.vida <=0){
-        menssagem(10, 20,"Heroi Derrotado!!!", 30);
-        vivo = 0;
-    }
+
     return vivo;
 }
 
@@ -188,7 +191,7 @@ int movimenta(char letra){
             if(mapa[heroi.posx+1][heroi.posy]=='.')
                 heroi.posx++;
             else
-                if(mapa[heroi.posx+1][heroi.posy]=='M')
+                if(mapa[heroi.posx+1][heroi.posy]=='M' || mapa[heroi.posx+1][heroi.posy]=='B')
                     vivo = batalha(heroi.posx+1, heroi.posy);
         }
     }
@@ -197,7 +200,7 @@ int movimenta(char letra){
             if(mapa[heroi.posx-1][heroi.posy]=='.')
                 heroi.posx--;
             else
-                if(mapa[heroi.posx-1][heroi.posy]=='M')
+                if(mapa[heroi.posx-1][heroi.posy]=='M' || mapa[heroi.posx-1][heroi.posy]=='B')
                     vivo = batalha(heroi.posx-1, heroi.posy);
         }
     }
@@ -206,7 +209,7 @@ int movimenta(char letra){
             if(mapa[heroi.posx][heroi.posy+1]=='.')
                 heroi.posy++;
             else
-                if(mapa[heroi.posx][heroi.posy+1]=='M')
+                if(mapa[heroi.posx][heroi.posy+1]=='M' || mapa[heroi.posx][heroi.posy+1]=='B')
                     vivo = batalha(heroi.posx, heroi.posy+1);
         }
     }
@@ -215,7 +218,7 @@ int movimenta(char letra){
             if(mapa[heroi.posx][heroi.posy-1]=='.')
                 heroi.posy--;
             else
-                if(mapa[heroi.posx][heroi.posy-1]=='M')
+                if(mapa[heroi.posx][heroi.posy-1]=='M' || mapa[heroi.posx][heroi.posy-1]=='B')
                     vivo = batalha(heroi.posx, heroi.posy-1);
         }
     }
