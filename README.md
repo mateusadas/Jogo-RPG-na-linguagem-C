@@ -1,18 +1,9 @@
-# Jogo-RPG-na-linguagem-C
-
-Com certeza! Um bom arquivo `README.md` é essencial para trabalhos acadêmicos, pois ajuda o professor (ou qualquer outra pessoa) a entender rapidamente o que é o projeto, como ele funciona e como executá-lo.
-
-Aqui está um modelo customizado e estruturado em Markdown para o seu jogo de RPG em C:
-
----
-
 # Jogo de RPG em C (Console)
 
 Este é um jogo de RPG em modo texto desenvolvido em linguagem C para o console do Windows. O projeto foi construído como parte da disciplina de **Fundamentos da Programação**.
 
-O jogador controla um herói (`H`) em um mapa de tamanho $7 \times 7$, onde o objetivo é derrotar o Boss (`B`) para conseguir a chave (`S`) e conseguir escapar pela saída. Pelo caminho, o jogador enfrentará monstros comuns (`M`) em combates baseados em rolagens de dados.
+O jogador controla um herói (`H`) em um mapa de tamanho 7 por 7, onde o objetivo é derrotar o Boss (`B`) para conseguir a chave (`S`) e conseguir escapar pela saída. Pelo caminho, o jogador enfrentará monstros comuns (`M`) em combates baseados em rolagens de dados.
 
----
 
 ## 🎮 Como Jogar
 
