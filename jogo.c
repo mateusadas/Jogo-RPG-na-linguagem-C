@@ -142,7 +142,7 @@ void rolarDados(int m){
         }
     }
     gotoxy(18, 22);
-    printf("Ataque inicial [%03d] | Vida heroi [%02d] | Vida Monstro [%02d]", dado, heroi.vida, monstros[m].vida);
+    printf("Ataque inicial [%02d] | Vida heroi [%02d] | Vida Monstro [%02d]", dado, heroi.vida, monstros[m].vida);
 
 
 }
@@ -181,7 +181,7 @@ int batalha(int x, int y){
 int movimenta(char letra){
     int vivo =1;
     movimentos++;
-    //gotoxy(11,24); printf("Movimentos: %03d", movimentos);
+    gotoxy(11,24); printf("Movimentos: %03d", movimentos);
     mapa[heroi.posx][heroi.posy]='.';
     if(letra == 80 || letra=='s'){  //Colocando pra ele andar para baixo tanto com S como com a flechinha para baixosws
         //Seria o conceito de colisão
@@ -255,13 +255,47 @@ int movimenta(char letra){
 }
 
 
-
-
-
+/* Na função gera monstro eu estava em loop infinito pois estava mexendo com as posições reais do heroi. Para solução primeiro
+declaro variaveis de linha e coluna inicial e final pegando a posição do heroi e decrescedo um e acrescendo um, depois usando if's
+eu granti que as variaveis de inicio e fim do for sejam sempre valores dentro da matriz(ex:se a heroi posx for 0 a variavel l_inicial valeria -1
+oque daria erro então caso de isso eu atribuo 0 que é o menor valor possível), e por fim fiz os laços for tendo como inicialização a atribuição
+da linha inicial a uma variavel linha para não ocorrer loop infinito.
+*/
 
 
 void contaMonstros(){
-    int qtd_monstros = 0;
+    int qtd_monstros = 0, l_inicial, l_final, c_inicial, c_final, linha, coluna;
+    l_inicial = heroi.posx - 1;
+    l_final = heroi.posx + 1;
+    c_inicial = heroi.posy - 1;
+    c_final = heroi.posy + 1;
+    if(l_inicial < 0){
+        l_inicial = 0;
+    }
+    if(l_final > TAM-1){
+        l_final = TAM-1;
+    }
+    if(c_inicial < 0){
+        c_inicial = 0;
+    }
+    if(c_final > TAM-1){
+        c_final = TAM-1;
+    }
+
+    for(linha=l_inicial; linha<=l_final; linha++){
+        for(coluna = c_inicial; coluna<=c_final; coluna++){
+            if(mapa[linha][coluna] == 'M' || mapa[linha][coluna] == 'B'){
+                qtd_monstros = qtd_monstros + 1;
+            }
+        }
+    }
+    gotoxy(18,21);printf("Existem %02d monstros por perto!",qtd_monstros);
+
+}
+/*
+VERSAO ERRADA
+Aqui eu usava a mesma variavel para acrecer e servir de condição então quando posx valia 1 a posx+1 valia 2 e se repetia infinitamente
+int qtd_monstros = 0;
     if(heroi.posx == 0 && heroi.posy == 0 || heroi.posx == 0 && heroi.posy == 1 || heroi.posx == 1 && heroi.posy == 0){
         for( ;heroi.posx <= heroi.posx+1; heroi.posx++){
             for( ; heroi.posy-1 <= heroi.posy+1; heroi.posy++){
@@ -290,6 +324,7 @@ void contaMonstros(){
     gotoxy(20,26);printf("Existem %02d monstros por perto.",qtd_monstros);
 
 }
+*/
 
 
 int main(){
@@ -310,9 +345,8 @@ int main(){
     geraMonstros(MONSTROS);
     do{
             mostraMapa();
-            //contaMonstros();
+            contaMonstros();
             char letra = getch();
-            gotoxy(11,24); printf("[%d] [%d]",heroi.posx, heroi.posy);
             vivo = movimenta(letra);
 
 
